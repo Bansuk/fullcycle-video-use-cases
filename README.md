@@ -73,3 +73,4 @@ O `Dockerfile` utiliza multi-stage builds:
 - **Jest + ts-jest** — testes unitários
 - **nodemon + ts-node** — hot-reload em desenvolvimento
 - **Docker** — ambientes de desenvolvimento e produção em contêiner
+# fullcycle-video-repo
