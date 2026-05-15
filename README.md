@@ -1,75 +1,75 @@
 # fullcycle-video-init
 
-Backend for a video catalog application built with **Domain-Driven Design (DDD)** principles, using **TypeScript** and **Node.js**.
+Backend de uma aplicação de catálogo de vídeos construída com os princípios de **Domain-Driven Design (DDD)**, utilizando **TypeScript** e **Node.js**.
 
-## Architecture
+## Arquitetura
 
-The project follows a DDD layered structure:
+O projeto segue uma estrutura em camadas DDD:
 
 ```
 src/
 ├── category/
 │   └── domain/
-│       ├── category.entity.ts       # Category aggregate root
+│       ├── category.entity.ts       # Aggregate root de Category
 │       └── __tests__/
 │           └── category.entity.spec.ts
 └── shared/
     └── domain/
-        ├── entity.ts                # Abstract base entity (UUID id, immutable props)
-        └── value-object.ts         # Abstract value object with deep equality
+        ├── entity.ts                # Entidade base abstrata (UUID id, props imutáveis)
+        └── value-object.ts         # Value object abstrato com igualdade profunda
 ```
 
-### Domain Concepts
+### Conceitos de Domínio
 
-- **Entity** — base class with an auto-generated UUID `id` and immutable `props`. Both `id` and `props` are locked via `Object.defineProperty` at construction time.
-- **ValueObject** — base class with frozen props and structural equality via `JSON.stringify`.
-- **Category** — aggregate root with `name`, `description`, `is_active`, and `created_at`. Supports `changeName`, `changeDescription`, `activate`, and `deactivate` mutations. Name is validated (non-empty, max 255 chars).
+- **Entity** — classe base com `id` UUID gerado automaticamente e `props` imutáveis. Tanto `id` quanto `props` são bloqueados via `Object.defineProperty` na construção.
+- **ValueObject** — classe base com props congeladas e igualdade estrutural via `JSON.stringify`.
+- **Category** — aggregate root com `name`, `description`, `is_active` e `created_at`. Suporta as mutações `changeName`, `changeDescription`, `activate` e `deactivate`. O nome é validado (não vazio, máximo de 255 caracteres).
 
-## Requirements
+## Requisitos
 
 - Node.js 20+
 - npm
 
-## Getting Started
+## Como Começar
 
-### Local (without Docker)
+### Local (sem Docker)
 
 ```bash
 npm install
 npm run start:dev
 ```
 
-### Docker (development)
+### Docker (desenvolvimento)
 
 ```bash
 docker compose up
 ```
 
-The app runs at `http://localhost:3000`.
+A aplicação roda em `http://localhost:3000`.
 
-## Available Scripts
+## Scripts Disponíveis
 
-| Script | Description |
+| Script | Descrição |
 |---|---|
-| `npm test` | Run all tests with Jest |
-| `npm run test:watch` | Run tests in watch mode |
-| `npm run build` | Compile TypeScript to `dist/` |
-| `npm run start:dev` | Start dev server with hot-reload via nodemon |
+| `npm test` | Executa todos os testes com Jest |
+| `npm run test:watch` | Executa os testes em modo watch |
+| `npm run build` | Compila o TypeScript para `dist/` |
+| `npm run start:dev` | Inicia o servidor de desenvolvimento com hot-reload via nodemon |
 
 ## Docker
 
-The `Dockerfile` uses multi-stage builds:
+O `Dockerfile` utiliza multi-stage builds:
 
-| Stage | Purpose |
+| Stage | Finalidade |
 |---|---|
-| `base` | Node 20 Alpine with dependencies installed |
-| `development` | Mounts source, runs via nodemon + ts-node |
-| `build` | Compiles TypeScript |
-| `production` | Minimal image with compiled output only |
+| `base` | Node 20 Alpine com dependências instaladas |
+| `development` | Monta o código-fonte, executa via nodemon + ts-node |
+| `build` | Compila o TypeScript |
+| `production` | Imagem mínima apenas com o output compilado |
 
-## Tech Stack
+## Tecnologias
 
-- **TypeScript 5** — strict mode, ES2020 target
-- **Jest + ts-jest** — unit testing
-- **nodemon + ts-node** — development hot-reload
-- **Docker** — containerized dev and production environments
+- **TypeScript 5** — modo strict, target ES2020
+- **Jest + ts-jest** — testes unitários
+- **nodemon + ts-node** — hot-reload em desenvolvimento
+- **Docker** — ambientes de desenvolvimento e produção em contêiner
