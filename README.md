@@ -126,3 +126,4 @@ O `Dockerfile` utiliza multi-stage builds:
 - **nodemon + ts-node** — hot-reload em desenvolvimento
 - **Docker** — ambientes de desenvolvimento e produção em contêiner
 # fullcycle-video-use-cases
+# fullcycle-video-use-cases
