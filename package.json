@@ -4,8 +4,9 @@
   "description": "Video catalog backend using Domain-Driven Design (DDD)",
   "main": "dist/index.js",
   "scripts": {
-    "test": "jest",
+    "test": "jest --coverage",
     "test:watch": "jest --watch",
+    "tsc:check": "tsc --noEmit",
     "build": "tsc",
     "start:dev": "nodemon --exec ts-node src/index.ts"
   },
