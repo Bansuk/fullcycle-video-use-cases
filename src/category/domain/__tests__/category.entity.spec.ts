@@ -1,4 +1,5 @@
 import { Category } from '../category.entity';
+import { EntityValidationError } from '../../../shared/domain/errors/validation.error';
 
 describe('Category Entity', () => {
   describe('Constructor / defaults', () => {
@@ -61,19 +62,50 @@ describe('Category Entity', () => {
   });
 
   describe('Validation', () => {
-    it('should throw when name is empty string', () => {
-      expect(() => Category.create({ name: '' })).toThrow('Name cannot be empty');
+    it('should throw EntityValidationError when name is empty string', () => {
+      expect(() => Category.create({ name: '' })).toThrow(EntityValidationError);
     });
 
-    it('should throw when name is whitespace only', () => {
-      expect(() => Category.create({ name: '   ' })).toThrow('Name cannot be empty');
+    it('should include name field in errors when name is empty', () => {
+      let error: EntityValidationError | undefined;
+      try {
+        Category.create({ name: '' });
+      } catch (e) {
+        error = e as EntityValidationError;
+      }
+      expect(error).toBeInstanceOf(EntityValidationError);
+      expect(error!.error).toHaveProperty('name');
     });
 
-    it('should throw when name exceeds 255 characters', () => {
+    it('should throw EntityValidationError when name is whitespace only', () => {
+      expect(() => Category.create({ name: '   ' })).toThrow(EntityValidationError);
+    });
+
+    it('should include name field in errors when name is whitespace only', () => {
+      let error: EntityValidationError | undefined;
+      try {
+        Category.create({ name: '   ' });
+      } catch (e) {
+        error = e as EntityValidationError;
+      }
+      expect(error).toBeInstanceOf(EntityValidationError);
+      expect(error!.error).toHaveProperty('name');
+    });
+
+    it('should throw EntityValidationError when name exceeds 255 characters', () => {
       const longName = 'a'.repeat(256);
-      expect(() => Category.create({ name: longName })).toThrow(
-        'Name cannot be longer than 255 characters',
-      );
+      expect(() => Category.create({ name: longName })).toThrow(EntityValidationError);
+    });
+
+    it('should include name field in errors when name exceeds 255 characters', () => {
+      let error: EntityValidationError | undefined;
+      try {
+        Category.create({ name: 'a'.repeat(256) });
+      } catch (e) {
+        error = e as EntityValidationError;
+      }
+      expect(error).toBeInstanceOf(EntityValidationError);
+      expect(error!.error).toHaveProperty('name');
     });
 
     it('should succeed when name is exactly 255 characters', () => {
@@ -91,16 +123,24 @@ describe('Category Entity', () => {
       expect(category.name).toBe('NewName');
     });
 
-    it('should throw when new name is empty', () => {
+    it('should throw EntityValidationError when new name is empty', () => {
       const category = Category.create({ name: 'ValidName' });
-      expect(() => category.changeName('')).toThrow('Name cannot be empty');
+      expect(() => category.changeName('')).toThrow(EntityValidationError);
     });
 
-    it('should throw when new name is too long', () => {
+    it('should throw EntityValidationError when new name is too long', () => {
       const category = Category.create({ name: 'ValidName' });
-      expect(() => category.changeName('x'.repeat(256))).toThrow(
-        'Name cannot be longer than 255 characters',
-      );
+      expect(() => category.changeName('x'.repeat(256))).toThrow(EntityValidationError);
+    });
+
+    it('should not change name when validation fails', () => {
+      const category = Category.create({ name: 'ValidName' });
+      try {
+        category.changeName('');
+      } catch {
+        // expected
+      }
+      expect(category.name).toBe('ValidName');
     });
   });
 
@@ -163,8 +203,6 @@ describe('Category Entity', () => {
   describe('Immutability', () => {
     it('should not allow direct assignment to props', () => {
       const category = Category.create({ name: 'Movies' });
-      // In strict mode, assigning to a readonly property is a compile error.
-      // At runtime we verify the property descriptor is not writable.
       const descriptor = Object.getOwnPropertyDescriptor(category, 'props');
       expect(descriptor?.writable).toBe(false);
     });

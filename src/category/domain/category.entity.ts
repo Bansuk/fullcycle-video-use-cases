@@ -1,4 +1,6 @@
 import { Entity } from '../../shared/domain/entity';
+import { EntityValidationError } from '../../shared/domain/errors/validation.error';
+import { CategoryValidatorFactory } from './category.validator';
 
 export interface CategoryProps {
   name: string;
@@ -22,16 +24,15 @@ export class Category extends Entity<CategoryProps> {
 
   static create(props: CategoryProps, id?: string): Category {
     const category = new Category(props, id);
-    Category.validate(category.props.name);
+    Category.validate(category.props);
     return category;
   }
 
-  private static validate(name: string): void {
-    if (!name || name.trim().length === 0) {
-      throw new Error('Name cannot be empty');
-    }
-    if (name.length > 255) {
-      throw new Error('Name cannot be longer than 255 characters');
+  private static validate(props: CategoryProps): void {
+    const validator = CategoryValidatorFactory.create();
+    const isValid = validator.validate(props);
+    if (!isValid) {
+      throw new EntityValidationError(validator.errors!);
     }
   }
 
@@ -52,7 +53,7 @@ export class Category extends Entity<CategoryProps> {
   }
 
   changeName(name: string): void {
-    Category.validate(name);
+    Category.validate({ ...this.props, name });
     (this.props as CategoryProps).name = name;
   }
 
